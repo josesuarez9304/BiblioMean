@@ -26,12 +26,10 @@ const registerClient = async (req, res) => {
   //ahoa se busca por el email para ir a la fija
   const existingClient = await client.findOne({ email: req.body.email });
   //si ya existe manda el error
-  if (existingClient)
-   return res.status(400).send("The client already exist");
+  if (existingClient) return res.status(400).send("The client already exist");
 
-   //uso el hash  para moler 
-   const hash = await bcrypt.hash(req.body.password,10);
-
+  //uso el hash  para moler
+  const hash = await bcrypt.hash(req.body.password, 10);
 
   //sino exite crea el esquema
   const clientSchema = new client({
@@ -48,7 +46,7 @@ const registerClient = async (req, res) => {
   //si eso esta vacio osea con signod e admiracion
   if (!result) return res.status(400).send("Failed to register Client");
 
-  return res.status(200).send({ message:"Client register" });
+  return res.status(200).send({ message: "Client register" });
 };
 
 //CONSULTA API GET
@@ -112,43 +110,48 @@ const deleteClient = async (req, res) => {
 };
 
 //login
-const login = async (req,res)=>{
-//valdia que le llegue el email y el password delñ formulario
-if(!req.body.email || !req.body.password)
-  return res.status(400).send({message:"Incomplete data"});
+const login = async (req, res) => {
+  //valdia que le llegue el email y el password delñ formulario
+  if (!req.body.email || !req.body.password)
+    return res.status(400).send({ message: "Incomplete data" });
 
   //busca si el email digitado esta registrado
-  //recuerde que cualqueir find se trae todos los datos que estan en esa coleccion en este caso los datos del cliente 
-  const clientLogin = await client.findOne({email:req.body.email});
-  if(!clientLogin)
-    return res.status(400).send({message: "Wrong email or password"});
+  //recuerde que cualqueir find se trae todos los datos que estan en esa coleccion en este caso los datos del cliente
+  const clientLogin = await client.findOne({ email: req.body.email });
+  if (!clientLogin)
+    return res.status(400).send({ message: "Wrong email or password" });
 
-    //compara con la q se esta recibiendo el json del formulario con  la q esta en la base de datos
-  const hash = await bcrypt.compare(req.body.password,clientLogin.password);
+  //compara con la q se esta recibiendo el json del formulario con  la q esta en la base de datos
+  const hash = await bcrypt.compare(req.body.password, clientLogin.password);
   //si a comparacion  en hash no se dio vota el mensaje
-  if(!hash)
-    return res.status(400).send({message: "Wrong email or paswword"});
-  try{
+  if (!hash)
+    return res.status(400).send({ message: "Wrong email or paswword" });
+  try {
     //genero el  json web token
     return res.status(200).json({
-     token: jwt.sign(
-       {
-         _id:clientLogin._id,
-         name: clientLogin.name,
-         iat: moment().unix(),
-       },
-       process.env.SK_JWT
-     ) ,
+      token: jwt.sign(
+        {
+          _id: clientLogin._id,
+          name: clientLogin.name,
+          iat: moment().unix(),
+        },
+        process.env.SK_JWT
+      ),
     });
-// se atrapa el error por q no se sabe que  pueda presentar de problema la  libreria del jwt son errores desconocidos no tenemos mensaje fijo ni nada
-  }catch(error){
-    //para el programador se deja ,error cuando este en produccion se quita el error 
-    return res.status(400).send({message: "Login error"},error);
+    // se atrapa el error por q no se sabe que  pueda presentar de problema la  libreria del jwt son errores desconocidos no tenemos mensaje fijo ni nada
+  } catch (error) {
+    //para el programador se deja ,error cuando este en produccion se quita el error
+    return res.status(400).send({ message: "Login error" }, error);
   }
-  
 };
 
 //con este deja publico
 //no hay geter and setter
 //si es una funcion si lleva llaves
-export default { registerClient, listClient, updateClient, deleteClient,login };
+export default {
+  registerClient,
+  listClient,
+  updateClient,
+  deleteClient,
+  login,
+};

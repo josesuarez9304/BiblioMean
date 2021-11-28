@@ -101,11 +101,18 @@ const deleteBook = async(req,res)=>{
   : res.status(200).send("Book deleted")
 }
 
+const findBook = async (req, res) => {
+  const bookId = await book.findById({ _id: req.params["_id"] });
+  return !bookId
+    ? res.status(400).send({ message: "No search results" })
+    : res.status(200).send({ bookId });
+};
+
 
 
 
 //con este deja publico 
 //no hay geter and setter 
 //si es una funcion si lleva llaves
-export default {registerBook,listBook,updateBook,deleteBook};
+export default {registerBook,listBook,updateBook,deleteBook,findBook};
 

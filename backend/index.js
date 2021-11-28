@@ -17,6 +17,8 @@ import book from "./routes/book.js";
 import client from "./routes/client.js";
 //import vendors proveedores
 import vendors from "./routes/vendors.js";
+//import el admin routes 
+import admin from "./routes/admin.js";
 
 dotenv.config();
 
@@ -36,6 +38,9 @@ app.use("/api/book",book);
 app.use("/api/client",client);
 //q use el vendors 
 app.use("/api/vendors",vendors);
+
+//api admin
+app.use("/api/admin",admin);
 
 //escuchar el siguiente puerto
 //para hacer q una funcion acepte optro parametro
